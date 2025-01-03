@@ -46,6 +46,11 @@ func (checker NegativePositive) Check(pass *analysis.Pass, call *CallMeta) *anal
 
 func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	newUseNegativeDiagnostic := func(replaceStart, replaceEnd token.Pos, replaceWith ast.Expr) *analysis.Diagnostic {
+		e, ok := isTypeConversion(replaceWith, "uint", "uint8", "uint16", "uint32", "uint64", "int", "int8", "int16", "int32", "int64")
+		if ok {
+			replaceWith = e
+		}
+
 		const proposed = "Negative"
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
 			analysis.TextEdit{
@@ -111,6 +116,11 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 
 func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	newUsePositiveDiagnostic := func(replaceStart, replaceEnd token.Pos, replaceWith ast.Expr) *analysis.Diagnostic {
+		e, ok := isTypeConversion(replaceWith, "uint", "uint8", "uint16", "uint32", "uint64", "int", "int8", "int16", "int32", "int64")
+		if ok {
+			replaceWith = e
+		}
+
 		const proposed = "Positive"
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
 			analysis.TextEdit{
